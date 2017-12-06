@@ -1,4 +1,5 @@
 import numpy as np
+from random import randint
 
 
 class Hopfield:
@@ -11,14 +12,32 @@ class Hopfield:
         for i in range(self.neurons):
             self.w[i][i] = 0
 
-    def predict(self, x):
-        prev = x
+    def predict(self, x, max_error):
+        #prev = x
+        iteration = 0
         while True:
-            x = Hopfield.signum(np.dot(self.w, x))
-            if np.array_equal(x, prev):
+            # synchronous x = Hopfield.signum(np.dot(self.w, x))
+            update = randint(0, self.neurons - 1)
+            x[update] = Hopfield.sign(np.dot(x.transpose(), self.w[:, update]))
+            error = self.error(x)
+            if error <= max_error:
                 break
-            prev = x
+            iteration += 1
+            #prev = x
         return x
+
+    def error(self, x):
+        error = 0
+        for i in range(self.neurons):
+            for j in range(self.neurons):
+                error += self.w[i][j]*x[i]*x[j]
+        return error*(-0.5)
+
+    @staticmethod
+    def sign(x):
+        if x >= 0:
+            return 1
+        return -1
 
     @staticmethod
     def signum(x):
