@@ -1,4 +1,4 @@
-from HopfieldNetwork_TSP import Hopfield
+from HopfieldNetwork_TSP_W import Hopfield
 import numpy as np
 from random import uniform
 
@@ -27,7 +27,14 @@ city[8] = (0.70, 0.80)
 city[9] = (0.83, 0.20)
 d = calc_d(city)
 
+"""
+# For Hopfield network built with NO weight matrix
 hp = Hopfield(v, d, 50.0)
-
 v = hp.predict(A=100.0, B=100.0, C=90.0, D=100.0, sigma=1, max_iterations=1000)
+print(v)
+"""
+
+# For Hopfield network built WITH weight amtrix
+hp = Hopfield(v, d, 50.0)
+v = hp.predict(A=100.0, B=100.0, C=90.0, D=100.0, max_iterations=1000)
 print(v)
