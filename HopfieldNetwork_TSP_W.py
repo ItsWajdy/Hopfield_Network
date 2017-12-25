@@ -1,6 +1,7 @@
-import numpy as np
 from random import randint
 from random import uniform
+
+import numpy as np
 
 
 def kronecker_delta(x, y):
@@ -51,7 +52,7 @@ class Hopfield:
 
         prev_error = self.calc_error(u, A, B, C, D)
         repeated = 0
-        max_repeat = 10
+        max_repeat = 15
         for iteration in range(max_iterations):
             u = self.update(u, C)
             error = self.calc_error(u, A, B, C, D)
@@ -67,15 +68,17 @@ class Hopfield:
         for i in range(self.cities):
             for j in range(self.cities):
                 ret[i][j] = u[self.x_to_index[(i, j)]][0]
+
         return ret
 
     def update(self, u, C):
+        # update is done asynchronously
+        # to make update synchronous replace C*(n+1) with a bias vector containing C*(n+sigma)
         n = self.cities
-        for iteration in range(n**2):
+        for iteration in range(5*n**2):
             i = randint(0, n-1)
             x = randint(0, n-1)
             u[self.x_to_index[(i, x)]][0] = self.f(np.dot(u.transpose(), self.w[:, self.x_to_index[(i, x)]]) + C*(n+1))
-
         return u
 
     def f(self, x):
@@ -113,9 +116,9 @@ class Hopfield:
                     if 0 < a < n-1:
                         tmpD += self.d[i][j]*u[self.x_to_index[(i, a)]][0]*(u[self.x_to_index[(j, a+1)]][0] + u[self.x_to_index[(j, a-1)]][0])
                     elif a > 0:
-                        tmpD += self.d[i][j]*u[self.x_to_index[(i, a)]][0]*(u[self.x_to_index[(j, a-1)]][0])
+                        tmpD += self.d[i][j]*u[self.x_to_index[(i, a)]][0]*(u[self.x_to_index[(j, a-1)]][0] + u[self.x_to_index[(j, 0)]][0])
                     elif a < n-1:
-                        tmpD += self.d[i][j]*u[self.x_to_index[(i, a)]][0]*(u[self.x_to_index[(j, a+1)]][0])
+                        tmpD += self.d[i][j]*u[self.x_to_index[(i, a)]][0]*(u[self.x_to_index[(j, a+1)]][0] + u[self.x_to_index[(j, n-1)]][0])
         tmpD *= (D/2.0)
 
         return tmpA + tmpB + tmpC + tmpD
