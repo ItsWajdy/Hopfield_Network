@@ -1,3 +1,7 @@
+"""
+Main implementation of the Hopfield network
+"""
+
 import numpy as np
 from random import randint
 

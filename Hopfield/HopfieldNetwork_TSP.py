@@ -1,3 +1,7 @@
+"""
+Using Hopfield networks to solve the traveling salesman problem
+"""
+
 import numpy as np
 from random import randint
 from random import uniform
